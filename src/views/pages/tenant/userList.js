@@ -19,7 +19,7 @@ import { TenantContext } from '../../../context/tenent'
 
 const UserList = () => {
   // const { message, users } = useSelector((state) => state.user)
-  let { userPermissions, getUsers, message , users} = useContext(TenantContext)
+  let {   getPermision , getUsers, message , users, userPermissions} = useContext(TenantContext)
   // console.log(userPermissions)
   // Get permissions from auth state
   //   console.log(permission)
@@ -42,12 +42,14 @@ const UserList = () => {
 //   }, [permissions])
 
   useEffect(() => {
-    // if (userPermissions.canView) {
-      getUsers()
-
-      console.log(users, userPermissions)
+    // if (userPermissions == null) {
+      getPermision()
     // }
-  }, [])
+    getUsers()
+    // console.log('User permissions:', userPermissions, users)
+
+    // }
+  }, [userPermissions])
 
   // Handle navigation to add user page
   const handleAddUser = () => {
@@ -80,6 +82,7 @@ const UserList = () => {
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>User Management</h3>
+        {console.log(JSON.stringify(userPermissions))}
         {/* {userPermissions.canCreate && (
           <CButton color="primary" onClick={handleAddUser}>
             <CIcon icon={cilPlus} className="me-2" />

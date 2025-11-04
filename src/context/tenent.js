@@ -9,7 +9,7 @@ const TenantContext = createContext()
 const Tenant = ({ children }) => {
   // const { permission } = useSelector((state) => state.auth) // from Redux store
   const [users, setUser] = useState([])
-  const [userPermissions, setUserPermissions] = useState([])
+  const [userPermissions, setUserPermissions] = useState(null)
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -27,13 +27,13 @@ const Tenant = ({ children }) => {
         // return { log: error };
       })
 
-    console.log('login api : ', info)
+    // console.log('login api : ', info)
     if (info.status == 200) {
-      console.log(info.data.data.permissions)
+      console.log(info.data.data.permissions, info.data.data)
+      setUserPermissions(info.data.data.permissions)
       localStorage.setItem('token', info.data.data.token)
-    setUserPermissions(info.data.data.permissions)
-      
-      // navigate('/tenant/users/get')
+    
+      navigate('/tenant/users/get')
     }
     setMessage(info.data.message)
   }
@@ -54,16 +54,35 @@ const Tenant = ({ children }) => {
     }
   }
 
+  const getPermision = async () => {
+    const info = await api
+    .get('tenant/permission')
+    .then((result) => {
+        // console.log(result)
+      return { status: result.status, data: result.data }
+    })
+    .catch((error) => {
+      return { message: error.response.data.message }
+    })
+    if(info.status == 200) {
+      setUserPermissions(info.data.permissions)
+    }
+  }
+
   // console.log(permission)
   useEffect(() => {
-    // setUserPermissions(permission)
-  }, [])
+      getPermision()
+
+  }, [userPermissions])
 
   return (
     <TenantContext.Provider
       value={{
+        // functions
         login,
         getUsers,
+        getPermision,
+        // states
         userPermissions,
         message,
         users
@@ -74,3 +93,9 @@ const Tenant = ({ children }) => {
   )
 }
 export { Tenant, TenantContext }
+
+
+/*
+
+
+*/

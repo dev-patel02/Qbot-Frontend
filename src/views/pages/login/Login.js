@@ -46,9 +46,15 @@ const Login = () => {
       console.log('Login form submitted:', values)
       // Here you can handle actual login API call
       await login(values)
-      console.log(userPermissions, "ss")
+      // console.log(userPermissions, "ss")
     },
   })
+  // useEffect(() => {
+  //   if (userPermissions) {
+  //     console.log('Permissions updated:', userPermissions)
+  //     // e.g. navigate('/tenant/users/get')
+  //   }
+  // }, [userPermissions])
 
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
