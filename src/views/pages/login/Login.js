@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import {
@@ -21,7 +21,7 @@ import { TenantContext } from '../../../context/tenent'
 // import { useDispatch, useSelector } from 'react-redux'
 // import { login } from '../../../slices/auth'
 
-// // ✅ Yup validation schema
+// Yup validation schema
 // const validationSchema =
 
 const Login = () => {
@@ -29,9 +29,8 @@ const Login = () => {
   // let { message, status } = useSelector((state) => state.auth)
   // const dispatch = useDispatch()
   const { login, userPermissions , message} = useContext(TenantContext)
-  const navigate = useNavigate()
 
-  // ✅ useFormik hook
+  //  useFormik hook
   const formik = useFormik({
     initialValues: {
       email: '',

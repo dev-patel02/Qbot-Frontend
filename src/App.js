@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from 'react'
-import { HashRouter, Route, Routes } from 'react-router-dom'
+import { HashRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
@@ -8,6 +8,7 @@ import './scss/style.scss'
 // We use those styles to show code examples, you should remove them in your application.
 import './scss/examples.scss'
 import { Tenant } from './context/tenent'
+import { UIProvider, useUIContext } from './context/ui'
 // import { PermissionProvider } from './context/permission'
 
 // Containers
@@ -21,7 +22,8 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
-  const storedTheme = useSelector((state) => state.ui.theme)
+  // const storedTheme = useSelector((state) => state.ui.theme)
+  const { theme : storedTheme, sidebarShow, setUI } = useUIContext();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.href.split('?')[1])
@@ -38,9 +40,10 @@ const App = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
+      // <UIProvider>
     <Tenant>
       {/* <PermissionProvider> */}
-        <HashRouter>
+        {/* <HashRouter> */}
           <Suspense
             fallback={
               <div className="pt-3 text-center">
@@ -56,9 +59,10 @@ const App = () => {
               <Route path="*" name="Home" element={<DefaultLayout />} />
             </Routes>
           </Suspense>
-        </HashRouter>
+        {/* </HashRouter> */}
       {/* </PermissionProvider> */}
     </Tenant>
+      // </UIProvider>
   )
 }
 

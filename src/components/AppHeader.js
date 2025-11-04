@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -28,13 +28,15 @@ import {
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
 import { set } from '../slices/uiSlice'
+import { useUIContext } from '../context/ui'
 
 const AppHeader = () => {
   const headerRef = useRef()
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
 
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector((state) => state.ui.sidebarShow)
+  // const dispatch = useDispatch()
+  // const sidebarShow = useSelector((state) => state.ui.sidebarShow)
+  const { theme, sidebarShow, setUI } = useUIContext();
   // console.log(sidebarShow, 'sss')
   useEffect(() => {
     const handleScroll = () => {
@@ -50,7 +52,7 @@ const AppHeader = () => {
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
       <CContainer className="border-bottom px-4" fluid>
         <CHeaderToggler
-          onClick={() => dispatch(set({ sidebarShow: !sidebarShow }))}
+          onClick={() => setUI({ sidebarShow: !sidebarShow })}
           // onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
           // style={{ marginInlineStart: '-14px' }}
         >

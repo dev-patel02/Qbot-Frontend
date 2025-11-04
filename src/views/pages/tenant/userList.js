@@ -10,20 +10,20 @@ import {
   CBadge,
   CSpinner,
 } from '@coreui/react'
-import { useDispatch, useSelector } from 'react-redux'
+// import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { getAll } from '../../../slices/tenant/user'
+// import { getAll } from '../../../slices/tenant/user'
 import CIcon from '@coreui/icons-react'
 import { cilPlus, cilPencil, cilTrash } from '@coreui/icons'
-import { PermissionContext } from '../../../context/permission'
+import { TenantContext } from '../../../context/tenent'
 
 const UserList = () => {
-  const { message, users } = useSelector((state) => state.user)
-  let { userPermissions } = useContext(PermissionContext)
-  console.log(userPermissions)
+  // const { message, users } = useSelector((state) => state.user)
+  let { userPermissions, getUsers, message , users} = useContext(TenantContext)
+  // console.log(userPermissions)
   // Get permissions from auth state
   //   console.log(permission)
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
   const navigate = useNavigate()
 
   // Find User module permissions
@@ -42,10 +42,12 @@ const UserList = () => {
 //   }, [permissions])
 
   useEffect(() => {
-    if (userPermissions.canView) {
-      dispatch(getAll())
-    }
-  }, [dispatch, userPermissions.canView])
+    // if (userPermissions.canView) {
+      getUsers()
+
+      console.log(users, userPermissions)
+    // }
+  }, [])
 
   // Handle navigation to add user page
   const handleAddUser = () => {
@@ -66,24 +68,24 @@ const UserList = () => {
   }
 
   // If user doesn't have view permission, show access denied
-  if (!userPermissions.canView) {
-    return (
-      <div className="p-4">
-        <div className="alert alert-danger">You don't have permission to view users.</div>
-      </div>
-    )
-  }
+  // if (!userPermissions.canView) {
+  //   return (
+  //     <div className="p-4">
+  //       <div className="alert alert-danger">You don't have permission to view users.</div>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>User Management</h3>
-        {userPermissions.canCreate && (
+        {/* {userPermissions.canCreate && (
           <CButton color="primary" onClick={handleAddUser}>
             <CIcon icon={cilPlus} className="me-2" />
             Add User
           </CButton>
-        )}
+        )} */}
       </div>
 
       {message && <div className="alert alert-info mb-3">{message}</div>}
@@ -98,11 +100,11 @@ const UserList = () => {
               <CTableHeaderCell scope="col">Email</CTableHeaderCell>
               <CTableHeaderCell scope="col">Role</CTableHeaderCell>
               <CTableHeaderCell scope="col">Status</CTableHeaderCell>
-              {(userPermissions.canEdit || userPermissions.canDelete) && (
+              {/* {(userPermissions.canEdit || userPermissions.canDelete) && (
                 <CTableHeaderCell scope="col" className="text-center">
                   Actions
                 </CTableHeaderCell>
-              )}
+              )} */}
             </CTableRow>
           </CTableHead>
           {/* {console.log(users)} */}
@@ -122,7 +124,7 @@ const UserList = () => {
                       {user.is_active ? 'Active' : 'Inactive'}
                     </CBadge>
                   </CTableDataCell>
-                  {(userPermissions.canEdit || userPermissions.canDelete) && (
+                  {/* {(userPermissions.canEdit || userPermissions.canDelete) && (
                     <CTableDataCell className="text-center">
                       {userPermissions.canEdit && (
                         <CButton
@@ -144,7 +146,7 @@ const UserList = () => {
                         </CButton>
                       )}
                     </CTableDataCell>
-                  )}
+                  )} */}
                 </CTableRow>
               ))
             ) : (
