@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -17,16 +17,18 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { useDispatch, useSelector } from 'react-redux'
-import { login } from '../../../slices/auth'
+import { TenantContext } from '../../../context/tenent'
+// import { useDispatch, useSelector } from 'react-redux'
+// import { login } from '../../../slices/auth'
 
 // // ✅ Yup validation schema
 // const validationSchema =
 
 const Login = () => {
   // const [message , setMessage ] = useState(null)
-  let { message, status } = useSelector((state) => state.auth)
-  const dispatch = useDispatch()
+  // let { message, status } = useSelector((state) => state.auth)
+  // const dispatch = useDispatch()
+  const { login, userPermissions , message} = useContext(TenantContext)
   const navigate = useNavigate()
 
   // ✅ useFormik hook
@@ -44,17 +46,10 @@ const Login = () => {
     onSubmit: async (values) => {
       console.log('Login form submitted:', values)
       // Here you can handle actual login API call
-      const {payload}  = await dispatch(login(values))
-      // console.log(payload, "111")
-      if (payload.status == 200) {
-        navigate('/dashboard')
-      }
-      // setMessage(payload.message)
+      await login(values)
+      console.log(userPermissions, "ss")
     },
   })
-  useEffect(()=>{
-
-  },[dispatch])
 
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
