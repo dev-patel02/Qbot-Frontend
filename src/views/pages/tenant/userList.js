@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import {
   CTable,
   CTableHead,
@@ -20,6 +20,12 @@ import { TenantContext } from '../../../context/tenent'
 const UserList = () => {
   // const { message, users } = useSelector((state) => state.user)
   let {   getPermision , getUsers, message , users, userPermissions} = useContext(TenantContext)
+  let [permisssion , setPermisssion] = useState({
+    canView: false ,
+    canCreate:false ,
+    canEdit: false ,
+    canDelete:false,
+})
   // console.log(userPermissions)
   // Get permissions from auth state
   //   console.log(permission)
@@ -40,16 +46,33 @@ const UserList = () => {
 //       //   canDelete: userModule?.can_delete || false,
 //     }
 //   }, [permissions])
-
-  useEffect(() => {
-    // if (userPermissions == null) {
-      getPermision()
+const deep = async() => {
+   const userModule = await userPermissions?.find((perm) => perm.module?.name === 'User')
+   await setPermisssion((result)=>( 
+    {
+      ...result,  
+      canView: userModule?.can_view ,
+      canCreate: userModule?.can_create ,
+      canEdit: userModule?.can_edit ,
+      canDelete: userModule?.can_delete
+    }))
+  //  console.log(userModule)
+    // return {
+   
+        // canView: userModule?.can_view ,
+        // canCreate: userModule?.can_create ,
+        // canEdit: userModule?.can_edit ,
+        // canDelete: userModule?.can_delete,
     // }
+ }
+  useEffect(async() => {
+
     getUsers()
-    // console.log('User permissions:', userPermissions, users)
-
+    const a=await deep()
+    console.log('User permissions:', userPermissions,  users,a)
+   
     // }
-  }, [userPermissions])
+  }, [])
 
   // Handle navigation to add user page
   const handleAddUser = () => {
@@ -69,8 +92,8 @@ const UserList = () => {
     }
   }
 
-  // If user doesn't have view permission, show access denied
-  // if (!userPermissions.canView) {
+  //  // If user doesn't have view permission, show access denied
+  // if (!permisssion.canView) {
   //   return (
   //     <div className="p-4">
   //       <div className="alert alert-danger">You don't have permission to view users.</div>
@@ -82,13 +105,13 @@ const UserList = () => {
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>User Management</h3>
-        {console.log(JSON.stringify(userPermissions))}
-        {/* {userPermissions.canCreate && (
+        {console.log(userPermissions)}
+        {permisssion.canCreate && (
           <CButton color="primary" onClick={handleAddUser}>
             <CIcon icon={cilPlus} className="me-2" />
             Add User
           </CButton>
-        )} */}
+        )}
       </div>
 
       {message && <div className="alert alert-info mb-3">{message}</div>}
@@ -103,11 +126,11 @@ const UserList = () => {
               <CTableHeaderCell scope="col">Email</CTableHeaderCell>
               <CTableHeaderCell scope="col">Role</CTableHeaderCell>
               <CTableHeaderCell scope="col">Status</CTableHeaderCell>
-              {/* {(userPermissions.canEdit || userPermissions.canDelete) && (
+              {(permisssion.canEdit || permisssion.canDelete) && (
                 <CTableHeaderCell scope="col" className="text-center">
                   Actions
                 </CTableHeaderCell>
-              )} */}
+              )}
             </CTableRow>
           </CTableHead>
           {/* {console.log(users)} */}
@@ -127,7 +150,7 @@ const UserList = () => {
                       {user.is_active ? 'Active' : 'Inactive'}
                     </CBadge>
                   </CTableDataCell>
-                  {/* {(userPermissions.canEdit || userPermissions.canDelete) && (
+                  {(permisssion.canEdit || permisssion.canDelete) && (
                     <CTableDataCell className="text-center">
                       {userPermissions.canEdit && (
                         <CButton
@@ -139,7 +162,7 @@ const UserList = () => {
                           <CIcon icon={cilPencil} className="me-1" />
                         </CButton>
                       )}
-                      {userPermissions.canDelete && (
+                      {permisssion.canDelete && (
                         <CButton
                           color="danger"
                           size="sm"
@@ -149,7 +172,7 @@ const UserList = () => {
                         </CButton>
                       )}
                     </CTableDataCell>
-                  )} */}
+                  )}
                 </CTableRow>
               ))
             ) : (

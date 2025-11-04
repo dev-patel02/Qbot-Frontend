@@ -20,7 +20,7 @@ import * as Yup from 'yup'
 const Register = () => {
   const [plans, setPlans] = useState([])
 
-  // ✅ Simulate fetching plans (you can replace with API call)
+  //  Simulate fetching plans (you can replace with API call)
   useEffect(() => {
     const planOptions = [
       { id: 101, name: 'Basic Plan' },
@@ -30,7 +30,7 @@ const Register = () => {
     setPlans(planOptions)
   }, [])
 
-  // ✅ Formik setup
+  //  Formik setup
   const formik = useFormik({
     initialValues: {
       restaurant_name: '',

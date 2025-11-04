@@ -64,12 +64,12 @@ const Login = () => {
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  {/* ✅ Formik form */}
+                  {/*  Formik form */}
                   <CForm onSubmit={formik.handleSubmit}>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
 
-                    {/* ✅ Email Input */}
+                    {/*  Email Input */}
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
@@ -87,7 +87,7 @@ const Login = () => {
                       <div className="text-danger mb-2">{formik.errors.email}</div>
                     )}
 
-                    {/* ✅ Password Input */}
+                    {/*  Password Input */}
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
                         <CIcon icon={cilLockLocked} />
@@ -106,7 +106,7 @@ const Login = () => {
                     )}
                     {message && <div className="text-danger mb-2">{message}</div>}
 
-                    {/* ✅ Buttons */}
+                    {/*  Buttons */}
                     <CRow>
                       <CCol xs={6}>
                         <CButton type="submit" color="primary" className="px-4">
@@ -123,7 +123,7 @@ const Login = () => {
                 </CCardBody>
               </CCard>
 
-              {/* ✅ Right-side card */}
+              {/*  Right-side card */}
               <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
                   <div>
