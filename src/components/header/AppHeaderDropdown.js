@@ -90,7 +90,6 @@ const AppHeaderDropdown = () => {
         <CDropdownDivider />
         <CDropdownItem href="" onClick={() =>{
           localStorage.removeItem("token")
-          localStorage.removeItem("permission")
           navigate("/login")
         }}>
           <CIcon icon={cilAccountLogout} className="me-2" />

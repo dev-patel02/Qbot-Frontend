@@ -1,91 +1,113 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../apis/axiosInstance'
 
-// Create context
 const TenantContext = createContext()
 
-// Provider component
 const Tenant = ({ children }) => {
   const [users, setUser] = useState([])
-  const [userPermissions, setUserPermissions] = useState(() =>
-    JSON.parse(localStorage.getItem('permission')),
-  )
+  const [userPermissions, setUserPermissions] = useState([])
   const [message, setMessage] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [permissionsLoaded, setPermissionsLoaded] = useState(false)
+  let [token, setToken] = useState(localStorage.getItem('token'))
   const navigate = useNavigate()
 
-  let login = async (credentials) => {
-    const info = await api
-      .post('tenant/login', credentials)
-      .then((result) => {
-        return { status: result.status, data: result.data }
-      })
-      .catch((error) => {
-        console.log(error)
-        return { message: error.response.data.message }
-      })
-
-    // console.log('login api : ', info)
-    if (info.status == 200) {
-      console.log(info.data.data.permissions, info.data.data)
-      // setUserPermissions(info.data.data.permissions)
-      localStorage.setItem('token', info.data.data.token)
-      localStorage.setItem('permission', JSON.stringify(info.data.data.permissions))
-
-      navigate('/tenant/user/get')
+  const login = async (credentials) => {
+    setLoading(true)
+    try {
+      const result = await api.post('tenant/login', credentials)
+      if (result.status === 200) {
+        setUserPermissions(result.data.data.permissions)
+        localStorage.setItem('token', result.data.data.token)
+        setToken(result.data.data.token)
+        setPermissionsLoaded(true)
+        setMessage(result.data.message)
+        navigate('/tenant/user/get')
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Login failed')
+    } finally {
+      setLoading(false)
     }
-    setMessage(info.data.message)
   }
 
   const getUsers = async () => {
-    const info = await api
-      .get('tenant/user')
-      .then((result) => {
-        // console.log(result)
-        return { status: result.status, data: result.data }
-      })
-      .catch((error) => {
-        console.log(error)
-        return { message: error.response.data.message }
-      })
-    console.log(info)
-    if (info.status == 200) {
-      console.log(info.data.data)
-      setUser(info.data.data)
+    try {
+      const result = await api.get('tenant/user')
+      if (result.status === 200) {
+        setUser(result.data.data)
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Failed to fetch users')
     }
   }
 
   const getPermision = async () => {
-    const info = await api
-      .get('tenant/permission')
-      .then((result) => {
-        return { status: result.status, data: result.data }
-      })
-      .catch((error) => {
-        console.log(error)
-        return { message: error.response.data.message }
-      })
-    if (info.status == 200) {
-      setUserPermissions(info.data.permissions)
+    const currentToken = localStorage.getItem('token')
+    if (!currentToken) {
+      setLoading(false)
+      setPermissionsLoaded(true)
+      return
+    }
+
+    setLoading(true)
+    try {
+      const result = await api.get('tenant/permission')
+      if (result.status === 200) {
+        setUserPermissions(result.data.permissions)
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token')
+        setToken(null)
+        navigate('/login')
+      }
+
+      setMessage(error.response?.data?.message || 'Failed to fetch permissions')
+    } finally {
+      setLoading(false)
+      setPermissionsLoaded(true)
     }
   }
+
+  const logout = () => {
+    localStorage.removeItem('token')
+    setToken(null)
+    setUserPermissions([])
+    setPermissionsLoaded(false)
+    navigate('/login')
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+
+    if (token) {
+      getPermision()
+    } else {
+      setLoading(false)
+      setPermissionsLoaded(true)
+    }
+  }, [])
 
   return (
     <TenantContext.Provider
       value={{
-        // functions
         login,
         getUsers,
         getPermision,
-        // states
+        logout,
         userPermissions,
         message,
         users,
+        loading,
+        permissionsLoaded,
+        token,
       }}
     >
       {children}
     </TenantContext.Provider>
   )
 }
+
 export { Tenant, TenantContext }
