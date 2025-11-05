@@ -47,7 +47,7 @@ const UserList = () => {
 //     }
 //   }, [permissions])
 const deep = async() => {
-   const userModule = await userPermissions?.find((perm) => perm.module?.name === 'User')
+   const userModule = await userPermissions?.find((perm) => perm.module?.name == 'User')
    await setPermisssion((result)=>( 
     {
       ...result,  
@@ -65,11 +65,11 @@ const deep = async() => {
         // canDelete: userModule?.can_delete,
     // }
  }
-  useEffect(async() => {
+  useEffect(() => {
 
     getUsers()
-    const a=await deep()
-    console.log('User permissions:', userPermissions,  users,a)
+    deep()
+    console.log('User permissions:', permisssion,  users)
    
     // }
   }, [])
@@ -105,7 +105,7 @@ const deep = async() => {
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>User Management</h3>
-        {console.log(userPermissions)}
+        {console.log(permisssion, userPermissions)}
         {permisssion.canCreate && (
           <CButton color="primary" onClick={handleAddUser}>
             <CIcon icon={cilPlus} className="me-2" />

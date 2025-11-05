@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../apis/axiosInstance'
 
@@ -7,13 +7,13 @@ const TenantContext = createContext()
 
 // Provider component
 const Tenant = ({ children }) => {
-  // const { permission } = useSelector((state) => state.auth) // from Redux store
   const [users, setUser] = useState([])
-  const [userPermissions, setUserPermissions] = useState(()=>(JSON.parse(localStorage.getItem("permission"))))
+  const [userPermissions, setUserPermissions] = useState(() =>
+    JSON.parse(localStorage.getItem('permission')),
+  )
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  // const dispatch = useDispatch()
 
   let login = async (credentials) => {
     const info = await api
@@ -22,9 +22,8 @@ const Tenant = ({ children }) => {
         return { status: result.status, data: result.data }
       })
       .catch((error) => {
+        console.log(error)
         return { message: error.response.data.message }
-        // console.log(error.response.data.log);
-        // return { log: error };
       })
 
     // console.log('login api : ', info)
@@ -33,23 +32,25 @@ const Tenant = ({ children }) => {
       // setUserPermissions(info.data.data.permissions)
       localStorage.setItem('token', info.data.data.token)
       localStorage.setItem('permission', JSON.stringify(info.data.data.permissions))
-    
-      navigate('/tenant/users/get')
+
+      navigate('/tenant/user/get')
     }
     setMessage(info.data.message)
   }
 
   const getUsers = async () => {
     const info = await api
-    .get('tenant/user')
-    .then((result) => {
+      .get('tenant/user')
+      .then((result) => {
         // console.log(result)
-      return { status: result.status, data: result.data }
-    })
-    .catch((error) => {
-      return { message: error.response.data.message }
-    })
-    if(info.status == 200) {
+        return { status: result.status, data: result.data }
+      })
+      .catch((error) => {
+        console.log(error)
+        return { message: error.response.data.message }
+      })
+    console.log(info)
+    if (info.status == 200) {
       console.log(info.data.data)
       setUser(info.data.data)
     }
@@ -57,19 +58,18 @@ const Tenant = ({ children }) => {
 
   const getPermision = async () => {
     const info = await api
-    .get('tenant/permission')
-    .then((result) => {
-        // console.log(result)
-      return { status: result.status, data: result.data }
-    })
-    .catch((error) => {
-      return { message: error.response.data.message }
-    })
-    if(info.status == 200) {
+      .get('tenant/permission')
+      .then((result) => {
+        return { status: result.status, data: result.data }
+      })
+      .catch((error) => {
+        console.log(error)
+        return { message: error.response.data.message }
+      })
+    if (info.status == 200) {
       setUserPermissions(info.data.permissions)
     }
   }
-
 
   return (
     <TenantContext.Provider
@@ -81,7 +81,7 @@ const Tenant = ({ children }) => {
         // states
         userPermissions,
         message,
-        users
+        users,
       }}
     >
       {children}
@@ -89,9 +89,3 @@ const Tenant = ({ children }) => {
   )
 }
 export { Tenant, TenantContext }
-
-
-/*
-
-
-*/
